@@ -4,7 +4,7 @@ We initialize the SR network from the network weights trained on the DIV2K datas
 
 You can download those pre-trained SR network weights from [**here**](https://drive.google.com/drive/folders/1Ly8yS8SF5V5itOQj3b9DE2k_IO1NvLXE?usp=sharing), then please locate them in `experiments/`.
 
-To be precise, the weights should be located as `datasets/pretrained_models/*`.
+To be precise, the weights should be located as `experiments/pretrained_models/*`.
 
 
 ## Training command
