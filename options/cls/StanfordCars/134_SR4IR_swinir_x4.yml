@@ -1,0 +1,105 @@
+name: 134_SR4IR_swinir_x4
+model_type: sr4ir_cls
+num_threads: 4
+print_freq: 45  # unit: iter
+scale: 4
+manual_seed: 200
+deterministic: true
+
+# data and augmentation
+data:
+  path: datasets/StanfordCars
+  train_resize_size: 256
+  train_crop_size: 224
+  val_resize_size: 256
+  val_crop_size: 224
+
+# network specs
+network_sr:
+  name: swinir
+  upscale: 4
+  in_chans: 3
+  img_size: 48
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+network_cls:
+  name: ResNet18
+  num_classes: 196
+
+# path for pretrained model
+path:
+  network_sr: experiments/pretrained_models/001_classicalSR_DIV2K_s48w8_SwinIR-M_x4.pth
+  network_sr_key: params
+  network_cls: ResNet18_Weights.IMAGENET1K_V1
+  strict_load: false
+
+# training config
+train:  
+  batch_size: 16  # 8 GPU
+  epoch: 200
+  save_freq: 50  # unit: epoch
+  eval_freq: 10
+  warmup_epoch: 20
+
+  # optimizer
+  optim_sr:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.999]
+  optim_cls:
+    type: SGD
+    lr: !!float 3e-2
+    momentum: 0.9
+    weight_decay: !!float 1e-4
+    
+  # scheduler
+  scheduler_sr:
+    type: CosineAnnealingRestartLR
+    periods: [20, 180]
+    restart_weights: [1, 1]
+    eta_min: !!float 1e-6
+  scheduler_cls:
+    type: CosineAnnealingRestartLR
+    periods: [20, 180]
+    restart_weights: [1, 1]
+    eta_min: !!float 1e-4
+
+  # phase1 losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: !!float 1.0
+    reduction: mean
+  tdp_opt:
+    type: FeatureLoss
+    loss_weight: !!float 1.0
+    criterion: l1
+    layer_weights:
+      l4: 1.0
+
+  # phase2 losses
+  ce_sr_opt:
+    type: CELoss
+    label_smoothing: 0.0
+    loss_weight: !!float 0.34
+  ce_hr_opt:
+    type: CELoss
+    label_smoothing: 0.0
+    loss_weight: !!float 0.34
+  ce_cqmix_opt:
+    type: CELoss
+    label_smoothing: 0.0
+    loss_weight: !!float 0.34
+
+# training config
+test:  
+  batch_size: 32
+
+# DDP setting
+dist_url: env:://

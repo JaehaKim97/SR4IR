@@ -1,0 +1,66 @@
+name: 010_SR_edsr_x4
+model_type: sr_cls
+num_threads: 4
+print_freq: 45  # unit: iter
+scale: 4
+manual_seed: 200
+deterministic: true
+
+# data and augmentation
+data:
+  path: datasets/CUB200
+  train_resize_size: 256
+  train_crop_size: 224
+  val_resize_size: 256
+  val_crop_size: 224
+
+# network specs
+network_sr:
+  name: edsr
+  n_blocks: 16
+  n_feats: 64
+network_cls:
+  name: ResNet18
+  num_classes: 200
+
+# path for pretrained model
+path:
+  network_sr: experiments/pretrained_models/edsr_baseline_x4-6b446fab.pt
+  network_cls: ~
+
+# training config
+train:  
+  batch_size: 128  # 1 GPU
+  epoch: 200
+  save_freq: 50  # unit: epoch
+  eval_freq: 10
+
+  sr_is_trainable: true
+  cls_is_trainable: false
+
+  # optimizer
+  optim_sr:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.999]
+    
+  # scheduler
+  scheduler_sr:
+    type: CosineAnnealingRestartLR
+    periods: [200]
+    restart_weights: [1]
+    eta_min: !!float 1e-6
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: !!float 1.0
+    reduction: mean
+
+# training config
+test:  
+  batch_size: 32
+
+# DDP setting
+dist_url: env:://

@@ -1,0 +1,79 @@
+name: 031_S2T_swinir_x4
+model_type: sr_cls
+num_threads: 4
+print_freq: 45  # unit: iter
+scale: 4
+manual_seed: 200
+deterministic: true
+# test_only: true
+
+# data and augmentation
+data:
+  path: datasets/CUB200
+  train_resize_size: 256
+  train_crop_size: 224
+  val_resize_size: 256
+  val_crop_size: 224
+
+# network specs
+network_sr:
+  name: swinir
+  upscale: 4
+  in_chans: 3
+  img_size: 48
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+network_cls:
+  name: ResNet18
+  num_classes: 200
+
+# path for pretrained model
+path:
+  network_sr: experiments/cls/030_SR_swinir_x4/models/net_sr_200.pth
+  network_cls: ResNet18_Weights.IMAGENET1K_V1
+  strict_load: false
+
+# training config
+train:  
+  batch_size: 32  # 4 GPU
+  epoch: 200
+  save_freq: 20  # unit: epoch
+  eval_freq: 100
+
+  sr_is_trainable: false
+  cls_is_trainable: true
+
+  # optimizer
+  optim_cls:
+    type: SGD
+    lr: !!float 3e-2
+    momentum: 0.9
+    weight_decay: !!float 1e-4
+    
+  # scheduler
+  scheduler_cls:
+    type: CosineAnnealingRestartLR
+    periods: [200]
+    restart_weights: [1]
+    eta_min: !!float 1e-4
+
+  # losses
+  ce_opt:
+    type: CELoss
+    label_smoothing: 0.0
+    loss_weight: !!float 1.0
+
+# training config
+test:  
+  batch_size: 32
+  # calculate_lpips: true
+  visualize: false
+
+# DDP setting
+dist_url: env:://

@@ -1,0 +1,78 @@
+name: 031_S2T_swinir_x4
+model_type: sr_seg
+num_threads: 16
+print_freq: 45  # unit: iter
+manual_seed: 200
+scale: 4
+deterministic: true
+# test_only: true
+
+# data and augmentation
+data:
+  name: voc
+  path: datasets/VOC
+  base_size: 520
+  crop_size: 480
+
+# network specs
+network_sr:
+  name: swinir
+  upscale: 4
+  in_chans: 3
+  img_size: 48
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+network_seg:
+  name: deeplabv3_mobilenet_v3_large
+  weights_backbone: MobileNet_V3_Large_Weights.IMAGENET1K_V1
+  num_classes: 21
+  aux_loss: true
+
+# path for pretrained model
+path:
+  network_sr: experiments/seg/030_SR_swinir_x4/models/net_sr_100.pth
+  network_seg: ~
+
+# training config
+train:  
+  batch_size: 8  # 2 GPU
+  epoch: 100
+  save_freq: 50  # unit: epoch
+  eval_freq: 10
+
+  sr_is_trainable: false
+  seg_is_trainable: true
+
+  # optimizer
+  optim_seg:
+    type: SGD
+    lr: !!float 2e-2
+    momentum: 0.9
+    weight_decay: !!float 1e-6
+  
+  # scheduler
+  scheduler_seg:
+    type: CosineAnnealingRestartLR
+    periods: [100]
+    restart_weights: [1]
+    eta_min: !!float 1e-4
+
+  # losses
+  auxce_opt:
+    type: AUXCELoss
+    loss_weight: !!float 1.0
+    aux_loss_weight: !!float 0.5
+    ignore_index: 255
+
+# training config
+test:  
+  batch_size: 1
+
+# DDP setting
+dist_url: env:://

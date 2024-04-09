@@ -1,0 +1,58 @@
+name: 002_L2T_x8
+model_type: lr_det
+num_threads: 16
+print_freq: 100  # unit: iter
+scale: 8
+manual_seed: 100
+deterministic: true
+# test_only: true
+
+# data and augmentation
+data:
+  path: datasets/VOC_COCO
+  format: coco
+  aspect_ratio_group_factor : 3
+  data_augmentation: hflip
+  is_voc: true
+
+# network specs
+network_det:
+  name: fasterrcnn_mobilenet_v3_large_fpn
+  weights_backbone: MobileNet_V3_Large_Weights.IMAGENET1K_V1
+  num_classes: 21
+
+# path for pretrained model
+path:
+  network_det: ~
+
+# training config
+train:  
+  batch_size: 16  # 1 GPU
+  epoch: 30
+  save_freq: 10  # unit: epoch
+  eval_freq: 5
+
+  # optimizer
+  optim_det:
+    type: SGD
+    lr: !!float 2e-2
+    momentum: 0.9
+    weight_decay: !!float 1e-4
+  
+  # scheduler
+  scheduler:
+    type: cosineannealinglr
+    T_max: 30
+    eta_min: !!float 1e-4
+
+  # losses
+  det_opt:
+    type: DETLoss
+    loss_weight: !!float 1.0
+
+# testing config
+test:  
+  batch_size: 1
+
+# DDP setting
+dist_url: env:://

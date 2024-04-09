@@ -1,0 +1,81 @@
+name: 042_T2S_swinir_x8
+model_type: sr_det
+num_threads: 16
+print_freq: 100  # unit: iter
+manual_seed: 100
+scale: 8
+deterministic: true
+# test_only: true
+
+# data and augmentation
+data:
+  path: datasets/VOC_COCO
+  format: coco
+  aspect_ratio_group_factor : 3
+  data_augmentation: hflip
+  is_voc: true
+
+# network specs
+network_sr:
+  name: swinir
+  upscale: 8
+  in_chans: 3
+  img_size: 48
+  window_size: 8
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+network_det:
+  name: fasterrcnn_mobilenet_v3_large_fpn
+  weights_backbone: MobileNet_V3_Large_Weights.IMAGENET1K_V1
+  num_classes: 21
+
+# path for pretrained model
+path:
+  network_sr: experiments/pretrained_models/001_classicalSR_DIV2K_s48w8_SwinIR-M_x8.pth
+  network_sr_key: params
+  network_det: experiments/det/000_H2T/models/net_det_030.pth
+
+# training config
+train:  
+  batch_size: 16  # 1 GPU
+  epoch: 30
+  save_freq: 10  # unit: epoch
+  eval_freq: 10
+
+  sr_is_trainable: true
+  det_is_trainable: false
+
+  # optimizer
+  optim_sr:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [0.9, 0.999]
+  
+  # scheduler
+  scheduler_sr:
+    type: CosineAnnealingRestartLR
+    periods: [30]
+    restart_weights: [1]
+    eta_min: !!float 1e-6
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: !!float 1.0
+    reduction: mean
+  det_opt:
+    type: DETLoss
+    loss_weight: !!float 1.0
+
+# training config
+test:  
+  batch_size: 1
+
+# DDP setting
+dist_url: env:://

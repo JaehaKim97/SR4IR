@@ -1,0 +1,60 @@
+name: 000_H2T
+model_type: hr_seg
+num_threads: 16
+print_freq: 45  # unit: iter
+manual_seed: 200
+deterministic: true
+# test_only: true
+
+# data and augmentation
+data:
+  name: voc
+  path: datasets/VOC
+  base_size: 520
+  crop_size: 480
+
+# network specs
+network_seg:
+  name: deeplabv3_mobilenet_v3_large
+  weights_backbone: MobileNet_V3_Large_Weights.IMAGENET1K_V1
+  num_classes: 21
+  aux_loss: true
+
+# path for pretrained model
+path:
+  network_seg: ~
+
+# training config
+train:  
+  batch_size: 16  # 1 GPU
+  epoch: 100
+  save_freq: 50  # unit: epoch
+  eval_freq: 5
+
+  # optimizer
+  optim_seg:
+    type: SGD
+    lr: !!float 2e-2
+    momentum: 0.9
+    weight_decay: !!float 1e-6
+  
+  # scheduler
+  scheduler:
+    type: cosineannealinglr
+    T_max: 100
+    eta_min: !!float 1e-4
+
+  # losses
+  auxce_opt:
+    type: AUXCELoss
+    loss_weight: !!float 1.0
+    aux_loss_weight: !!float 0.5
+    ignore_index: 255
+
+# training config
+test:  
+  batch_size: 1
+  calculate_lpips: true
+
+# DDP setting
+dist_url: env:://
