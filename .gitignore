@@ -1,0 +1,12 @@
+# large memory files
+experiments
+tb_loggers
+datasets
+
+# temporary files
+__pycache__
+*.swp
+
+# tmp files
+scripts
+rm_archives.sh

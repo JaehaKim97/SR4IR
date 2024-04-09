@@ -37,7 +37,7 @@ network_seg:
 path:
   network_sr: experiments/pretrained_models/001_classicalSR_DIV2K_s48w8_SwinIR-M_x8.pth
   network_sr_key: params
-  network_seg: ~ #DeepLabV3_MobileNet_V3_Large_Weights.COCO_WITH_VOC_LABELS_V1
+  network_seg: ~
 
 # training config
 train:  
