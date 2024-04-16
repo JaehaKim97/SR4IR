@@ -11,7 +11,7 @@ Locate them on `experiments/`, e.g., `experiments/seg/000_H2T/*`.
 The testing command is below:
 
 ```
-CUDA_VISIBLE_DEVICES=0 python src/test.py -opt path/to/config --test_only
+CUDA_VISIBLE_DEVICES=0 python src/main.py -opt path/to/config --test_only
 ```
 
 The ` --test_only` flag will automatically load the latest SR and Task network weights in the corresponding experiment folder.
