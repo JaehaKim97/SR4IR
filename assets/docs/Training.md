@@ -48,6 +48,8 @@ However, if your GPU memory size is smaller, so the OOM issue occurs, then you c
 <br />
 
 <div align="right">
+ Link to <a href="./Testing.md" style="float: right;">Testing</a>.
+ 
  Return to main: https://github.com/JaehaKim97/SR4IR
 </div>
 
