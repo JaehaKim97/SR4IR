@@ -78,6 +78,7 @@ The processed dataset will located at ```datasets/CUB200```.
 <br />
 
 <div align="right">
-<!--  <a href="../../README.md" style="float: right;">Link</a> to return main document. -->
+ Link to <a href="./Training.md" style="float: right;">Training</a> and <a href="./Testing.md" style="float: right;">Testing</a>.
+ 
  Return to main: https://github.com/JaehaKim97/SR4IR
 </div>
