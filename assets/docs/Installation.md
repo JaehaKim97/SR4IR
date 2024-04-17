@@ -10,7 +10,7 @@ cd SR4IR
 2. Set the environment. We recommend using [**Anaconda**](https://www.anaconda.com/products/distribution).
 
 ```
- conda env create -f environment.yaml
+ conda env create -f assets/environment.yaml
  conda activate SR4IR
  python src/setup.py
 ```

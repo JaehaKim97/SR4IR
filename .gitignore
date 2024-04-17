@@ -3,10 +3,11 @@ experiments
 tb_loggers
 datasets
 
-# temporary files
-__pycache__
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 *.swp
 
-# tmp files
+# files for experiments
 scripts
 rm_archives.sh
