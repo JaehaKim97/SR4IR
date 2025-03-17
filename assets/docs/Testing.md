@@ -4,6 +4,8 @@ You can download the pre-trained model in [**here**](https://drive.google.com/dr
 
 Note that we only offer models for {Segmentation, Detection, Classification-StanfordCars} with X8 SR scale combined with the EDSR-baseline SR model.
 
+(*Update 2025.03.17* - We additionally upload SR4IR with SwinIR models in both x4 and x8 scales)
+
 Locate them on `experiments/`, e.g., `experiments/seg/000_H2T/*`.
 
 ## Testing command
