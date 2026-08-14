@@ -2,6 +2,8 @@
 This repository is an official implementation of the paper **"Beyond Image Super-Resolution for Image Recognition with Task-Driven Perceptual Loss** (CVPR 2024)". [[**arXiv**](https://arxiv.org/abs/2404.01692)]
 
 ### Update
+[**2026.08.13**] Our new work [NOLA-IR](https://arxiv.org/abs/2607.25390) on task-driven image restoration with diffusion priors is now available! :sparkles: The code is released [here](https://github.com/JaehaKim97/NOLA-IR). :blush:
+
 [**2025.08.01**] Our follow-up paper [Exploiting Diffusion Prior for Task-driven Image Restoration](https://www.arxiv.org/abs/2507.22459) is accepted to ICCV 2025! :tada: The code is available at [here](https://github.com/JaehaKim97/EDTR). :blush:
 
 ### Abstract
